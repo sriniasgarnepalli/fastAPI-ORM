@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:password123@localhost/fastAPI"
+SQLALCHEMY_DATABASE_URL = "postgresql://username:password@host/DbName"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
