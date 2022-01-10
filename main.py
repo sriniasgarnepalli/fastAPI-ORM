@@ -82,22 +82,12 @@ def test_posts(db: Session = Depends(get_db)):
 
 @app.get("/posts")
 async def posts(db: Session = Depends(get_db)):
-    # cursor.execute("""SELECT * FROM posts """)
-    # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
     return {"message": posts}
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 async def create_posts(post: Post, db: Session = Depends(get_db)):
-    # post_dict = post.dict()
-    # post_dict['id'] = randrange(0, 100000)
-    # my_posts.append(post_dict)
-    # for postgres
-    # new_post = cursor.execute(
-    #     """INSERT INTO posts (title, content, number) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.number))
-    # new_post = cursor.fetchone()
-    # conn.commit()
     post.dict()
     new_post = models.Post(**post.dict())
     db.add(new_post)
@@ -105,19 +95,10 @@ async def create_posts(post: Post, db: Session = Depends(get_db)):
     db.refresh(new_post)
     print(new_post)
     return {"data": new_post}
-# title str, content str, number int
+
 
 
 @app.get('/posts/{id}')
-# def get_post(id: int, response: Response):
-# cursor.execute("""SELECT * FROM posts WHERE id = %s """, (str(id)))
-# post = cursor.fetchone()
-# print(post)
-# if not post:
-#     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-#                         detail=f"Post with id: {id} was not found")
-#     # response.status_code = status.HTTP_404_NOT_FOUND
-#     # return {'message': f"Post with id: {id} was not found"}
 def get_post(id=int, db: Session = Depends(get_db)):
     get_post = db.query(models.Post).filter(models.Post.id == id).first()
     if not get_post:
@@ -129,14 +110,6 @@ def get_post(id=int, db: Session = Depends(get_db)):
 
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
-# def delete_post(id: int):
-#     cursor.execute(
-#         """DELETE FROM posts WHERE id = %s returning *""", (str(id),))
-#     deleted_post = cursor.fetchone()
-#     conn.commit()
-#     if deleted_post == None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-#                             detail=f"Post with id: {id} doesnot exist")
 def delete_post(id=int, db: Session = Depends(get_db)):
     delete_post = db.query(models.Post).filter(models.Post.id == id)
     if delete_post.first() == None:
@@ -148,11 +121,6 @@ def delete_post(id=int, db: Session = Depends(get_db)):
 
 
 @app.put("/posts/{id}")
-# def update_post(id: int, post: Post):
-#     cursor.execute("""UPDATE posts SET title = %s, content = %s, number = %s WHERE id = %s RETURNING *""",
-#                    (post.title, post.content, post.number, str(id)))
-#     updated_post = cursor.fetchone()
-#     conn.commit()
 def update_post(id: int, updated_post: Post, db: Session = Depends(get_db)):
     update_query = db.query(models.Post).filter(models.Post.id == id)
     post = update_query.first()
